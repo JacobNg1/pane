@@ -22,8 +22,15 @@
     <script>
         async function getWeather() {
             try {
-                // 使用 Open-Meteo API（免费、无需 Key、支持 CORS）
-                const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=39.9042&longitude=116.4074&current_weather=true&timezone=Asia/Shanghai');
+                // 先通过 IP 获取用户位置
+                const geoRes = await fetch('https://ipapi.co/json/');
+                const geoData = await geoRes.json();
+                const lat = geoData.latitude;
+                const lon = geoData.longitude;
+                const cityName = geoData.city || geoData.country_name || '未知';
+
+                // 使用 Open-Meteo API 获取天气
+                const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&timezone=auto`);
                 const data = await res.json();
 
                 const cw = data.current_weather;
@@ -31,7 +38,7 @@
                 const windSpeed = cw.windspeed;
                 const windDir = cw.winddirection;
 
-                document.getElementById('city').innerText = '北京';
+                document.getElementById('city').innerText = cityName;
                 document.getElementById('weather-box').innerHTML = `
                     <div class="temp">${temp}°C</div>
                     <div class="info">风速：${windSpeed} km/h | 风向：${windDir}°</div>
