@@ -20,32 +20,31 @@
     </div>
 
     <script>
-        // 使用高德地图高频免费 API（免 Key 演示，生产环境建议自己去高德/和风天气注册免费 Key）
         async function getWeather() {
             try {
-                // 1. 根据用户 IP 自动定位城市
-                const ipRes = await fetch('https://restapi.amap.com/v3/ip?key=b2ef87e795904ed2a20bde1ec1721b0f');
-                const ipData = await ipRes.json();
-                const adcode = ipData.adcode || '110000'; // 获取城市行政区号，默认北京
-                const cityName = ipData.city || '北京市';
-
+                // 使用开源免 Key 的 wttr.in 接口，直接请求 JSON 格式数据
+                const res = await fetch('https://wttr.in/?format=j1');
+                const data = await res.json();
+                
+                // 解析返回的数据
+                const current = data.current_condition[0];
+                const area = data.nearest_area[0];
+                
+                // 获取城市名（优先显示本地化名字，没有就显示英文名）
+                const cityName = area.localNames ? area.localNames[0].value : area.areaName[0].value;
                 document.getElementById('city').innerText = cityName;
 
-                // 2. 根据区号查询实时天气
-                const weatherRes = await fetch(`https://restapi.amap.com/v3/weather/weatherInfo?key=b2ef87e795904ed2a20bde1ec1721b0f&city=${adcode}`);
-                const weatherData = await weatherRes.json();
-                
-                if (weatherData.lives && weatherData.lives.length > 0) {
-                    const live = weatherData.lives[0];
-                    document.getElementById('weather-box').innerHTML = `
-                        <div class="temp">${live.temperature}°C</div>
-                        <div class="info">${live.weather} | 风向：${live.winddirection}风</div>
-                    `;
-                } else {
-                    throw new Error('天气数据为空');
-                }
+                // 获取温度和天气描述（自动翻译/转换为易读格式）
+                const temp = current.temp_C;
+                const weatherDesc = current.lang_zh ? current.lang_zh[0].value : current.weatherDesc[0].value;
+                const windDir = current.winddir16Point;
+
+                document.getElementById('weather-box').innerHTML = `
+                    <div class="temp">${temp}°C</div>
+                    <div class="info">${weatherDesc} | 风向：${windDir}</div>
+                `;
             } catch (error) {
-                document.getElementById('weather-box').innerText = '天气获取失败，请刷新重试';
+                document.getElementById('weather-box').innerText = '天气获取失败，请重试';
                 console.error(error);
             }
         }
