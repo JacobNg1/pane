@@ -34,10 +34,10 @@ function mapWeatherCode(code: number): WeatherType {
 
 export async function fetchCurrentWeather(): Promise<WeatherData> {
   // Get location by IP
-  const ipData = await fetch('https://ip-api.com/json/?lang=zh-CN')
+  const ipData = await fetch('https://ipapi.co/json/')
     .then(res => res.json());
 
-  const { lat, lon, country, city } = ipData;
+  const { latitude: lat, longitude: lon, country_name: country, city } = ipData;
   const locationName = `${city} · ${country}`;
 
   const weatherParams = new URLSearchParams({
@@ -65,10 +65,10 @@ export async function fetchCurrentWeather(): Promise<WeatherData> {
 
 export async function fetchForecast(): Promise<ForecastDay[]> {
   // Get location by IP
-  const ipData = await fetch('https://ip-api.com/json/?lang=zh-CN')
+  const ipData = await fetch('https://ipapi.co/json/')
     .then(res => res.json());
 
-  const { lat, lon } = ipData;
+  const { latitude: lat, longitude: lon } = ipData;
 
   const forecastParams = new URLSearchParams({
     latitude: lat.toString(),
