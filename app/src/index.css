@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Orbitron:wght@500;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root { --radius: 0.5rem; }
+  body { font-family: 'Nunito', sans-serif; -webkit-font-smoothing: antialiased; }
+}
+
+@layer utilities {
+  @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  @keyframes cloud-drift { 0% { transform: translateX(-100%); } 100% { transform: translateX(calc(100vw + 100%)); } }
+  @keyframes cloud-drift-reverse { 0% { transform: translateX(calc(100vw + 100%)); } 100% { transform: translateX(-100%); } }
+  @keyframes cloud-bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+  @keyframes rain-fall { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(20px); opacity: 0; } }
+  @keyframes snow-fall { 0% { transform: translateY(0) translateX(0); opacity: 1; } 100% { transform: translateY(20px) translateX(10px); opacity: 0; } }
+  @keyframes twinkle { 0%, 100% { opacity: 0.3; transform: scale(1); } 50% { opacity: 1; transform: scale(1.2); } }
+  @keyframes moon-glow { 0%, 100% { filter: drop-shadow(0 0 10px rgba(255, 250, 205, 0.5)); } 50% { filter: drop-shadow(0 0 20px rgba(255, 250, 205, 0.8)); } }
+  @keyframes pulse-slow { 0%, 100% { opacity: 0.8; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } }
+
+  .animate-spin-slow { animation: spin-slow 20s linear infinite; }
+  .animate-cloud-drift { animation: cloud-drift 45s linear infinite; }
+  .animate-cloud-drift-reverse { animation: cloud-drift-reverse 60s linear infinite; }
+  .animate-cloud-bounce { animation: cloud-bounce 3s ease-in-out infinite; }
+  .animate-rain-fall { animation: rain-fall 0.6s linear infinite; }
+  .animate-snow-fall { animation: snow-fall 2s ease-in-out infinite; }
+  .animate-twinkle { animation: twinkle 2s ease-in-out infinite; }
+  .animate-pulse-slow { animation: pulse-slow 4s ease-in-out infinite; }
+}
