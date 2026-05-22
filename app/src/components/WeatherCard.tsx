@@ -13,17 +13,15 @@ export const WeatherCard = ({ data }: { data: WeatherData }) => {
           <h1 className="text-white text-2xl font-bold drop-shadow-lg">{data.location}</h1>
           <p className="text-white/80 text-sm mt-1">{dateStr}</p>
         </div>
-        <div className="flex items-center justify-center gap-6 mb-6">
+        <div className="flex items-center justify-center gap-6 mb-2">
           <span className="text-white text-8xl font-bold tracking-tight drop-shadow-lg" style={{ fontFamily: "'Orbitron', monospace" }}>
             {data.temperature}
           </span>
           <span className="text-white text-3xl align-top">°</span>
-          <WeatherIcon weather={data.weather} size="lg" className="drop-shadow-lg" />
-        </div>
-        <div className="text-center mb-6">
-          <span className="inline-block bg-white/25 backdrop-blur px-4 py-2 rounded-full text-white text-lg font-medium">
-            {weatherLabels[data.weather]}
-          </span>
+          <div className="flex flex-col items-center">
+            <WeatherIcon weather={data.weather} size="lg" className="drop-shadow-lg" />
+            <span className="text-white/90 text-sm font-medium mt-1">{weatherLabels[data.weather]}</span>
+          </div>
         </div>
         <div className="grid grid-cols-3 gap-4 text-center">
           <StatItem icon="💧" label="湿度" value={`${data.humidity}%`} />
