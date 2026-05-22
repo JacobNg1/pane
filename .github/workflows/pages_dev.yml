@@ -36,10 +36,10 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: cd app && pnpm install --frozen-lockfile
 
       - name: Build
-        run: pnpm build
+        run: cd app && pnpm build
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
