@@ -1,8 +1,8 @@
-name: Deploy to GitHub Pages
+name: Deploy Dev to GitHub Pages
 
 on:
   push:
-    branches: [master]
+    branches: [dev]
   workflow_dispatch:
 
 permissions:
@@ -11,7 +11,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages"
+  group: "pages-dev"
   cancel-in-progress: true
 
 jobs:
