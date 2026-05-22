@@ -2,6 +2,30 @@ import type { WeatherData, ForecastDay, WeatherType } from '../types/weather';
 
 const NOW_API = 'https://api.open-meteo.com/v1/forecast';
 
+interface IpLocation {
+  lat: number;
+  lon: number;
+  city: string;
+  country: string;
+}
+
+async function getIpLocation(): Promise<IpLocation> {
+  // ip.sb returns lat/lon and supports CORS; use Accept-Language for Chinese names
+  const res = await fetch('https://api.ip.sb/geoip', {
+    headers: { 'Accept-Language': 'zh-CN,zh;q=0.9' },
+  });
+  if (!res.ok) {
+    throw new Error(`IP geolocation failed: ${res.status}`);
+  }
+  const data = await res.json();
+  return {
+    lat: parseFloat(data.latitude),
+    lon: parseFloat(data.longitude),
+    city: data.city || data.region || '未知城市',
+    country: data.country || '',
+  };
+}
+
 interface OpenMeteoNowResponse {
   current: {
     temperature_2m: number;
@@ -34,10 +58,8 @@ function mapWeatherCode(code: number): WeatherType {
 
 export async function fetchCurrentWeather(): Promise<WeatherData> {
   // Get location by IP
-  const ipData = await fetch('https://ipapi.co/json/')
-    .then(res => res.json());
+  const { lat, lon, city, country } = await getIpLocation();
 
-  const { latitude: lat, longitude: lon, country_name: country, city } = ipData;
   const locationName = `${city} · ${country}`;
 
   const weatherParams = new URLSearchParams({
@@ -49,6 +71,9 @@ export async function fetchCurrentWeather(): Promise<WeatherData> {
 
   const weatherResponse = await fetch(`${NOW_API}?${weatherParams}`);
   const weatherData: OpenMeteoNowResponse = await weatherResponse.json();
+  if (!weatherData.current) {
+    throw new Error(`Open-Meteo error: ${JSON.stringify(weatherData)}`);
+  }
 
   return {
     location: locationName,
@@ -65,10 +90,7 @@ export async function fetchCurrentWeather(): Promise<WeatherData> {
 
 export async function fetchForecast(): Promise<ForecastDay[]> {
   // Get location by IP
-  const ipData = await fetch('https://ipapi.co/json/')
-    .then(res => res.json());
-
-  const { latitude: lat, longitude: lon } = ipData;
+  const { lat, lon } = await getIpLocation();
 
   const forecastParams = new URLSearchParams({
     latitude: lat.toString(),
@@ -79,6 +101,9 @@ export async function fetchForecast(): Promise<ForecastDay[]> {
 
   const forecastResponse = await fetch(`${NOW_API}?${forecastParams}`);
   const forecastData: OpenMeteoForecastResponse = await forecastResponse.json();
+  if (!forecastData.daily) {
+    throw new Error(`Open-Meteo forecast error: ${JSON.stringify(forecastData)}`);
+  }
 
   const dayMap: Record<string, string> = {
     '0': '今天',
