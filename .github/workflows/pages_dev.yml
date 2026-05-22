@@ -36,7 +36,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: cd app && pnpm install --frozen-lockfile
+        run: cd app && pnpm install
 
       - name: Build
         run: cd app && pnpm build
