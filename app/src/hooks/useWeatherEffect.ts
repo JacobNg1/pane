@@ -4,6 +4,7 @@ import type { WeatherType } from '../types/weather';
 export const useWeatherEffect = (weather: WeatherType, canvasRef: React.RefObject<HTMLCanvasElement | null>) => {
   const animationRef = useRef<number>();
   const particlesRef = useRef<{ x: number; y: number; speed: number; size: number; opacity: number; angle?: number }[]>([]);
+  const lightningRef = useRef<{ active: boolean; opacity: number; nextFlashAt: number; flashesLeft: number }>({ active: false, opacity: 0, nextFlashAt: 0, flashesLeft: 0 });
 
   const createParticles = useCallback((canvas: HTMLCanvasElement) => {
     const count = weather === 'rainy' || weather === 'stormy' ? 150 : weather === 'snowy' ? 100 : weather === 'sunny' ? 5 : 8;
@@ -37,6 +38,32 @@ export const useWeatherEffect = (weather: WeatherType, canvasRef: React.RefObjec
         p.x += Math.sin(p.y * 0.02) * 0.5;
         if (p.y > canvas.height) { p.y = -10; p.x = Math.random() * canvas.width; }
       });
+
+      // Lightning effect for stormy
+      if (weather === 'stormy') {
+        const now = Date.now();
+        const bolt = lightningRef.current;
+        if (!bolt.active && now >= bolt.nextFlashAt) {
+          bolt.active = true;
+          bolt.flashesLeft = Math.random() > 0.5 ? 2 : 1;
+          bolt.opacity = 0.6 + Math.random() * 0.3;
+          bolt.nextFlashAt = now + 5000 + Math.random() * 2000; // 5-7s
+        }
+        if (bolt.active) {
+          ctx!.fillStyle = `rgba(255, 255, 255, ${bolt.opacity})`;
+          ctx!.fillRect(0, 0, canvas.width, canvas.height);
+          bolt.opacity -= 0.08;
+          if (bolt.opacity <= 0) {
+            bolt.flashesLeft--;
+            if (bolt.flashesLeft > 0) {
+              bolt.opacity = 0.4 + Math.random() * 0.3;
+            } else {
+              bolt.active = false;
+              bolt.nextFlashAt = now + 5000 + Math.random() * 2000;
+            }
+          }
+        }
+      }
     } else if (weather === 'snowy') {
       particles.forEach(p => {
         ctx!.beginPath();
