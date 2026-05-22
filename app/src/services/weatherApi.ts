@@ -10,10 +10,8 @@ interface IpLocation {
 }
 
 async function getIpLocation(): Promise<IpLocation> {
-  // ip.sb returns lat/lon and supports CORS; use Accept-Language for Chinese names
-  const res = await fetch('https://api.ip.sb/geoip', {
-    headers: { 'Accept-Language': 'zh-CN,zh;q=0.9' },
-  });
+  // ip.sb returns reliable lat/lon; city may be English
+  const res = await fetch('https://api.ip.sb/geoip');
   if (!res.ok) {
     throw new Error(`IP geolocation failed: ${res.status}`);
   }
@@ -24,6 +22,21 @@ async function getIpLocation(): Promise<IpLocation> {
     city: data.city || data.region || '未知城市',
     country: data.country || '',
   };
+}
+
+async function getChineseCityName(enCity: string): Promise<{ city: string; country: string }> {
+  // Search by English city name but request Chinese language results
+  const res = await fetch(
+    `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(enCity)}&count=1&language=zh&format=json`
+  );
+  const data = await res.json();
+  if (data.results && data.results.length > 0) {
+    return {
+      city: data.results[0].name || enCity,
+      country: data.results[0].country || '',
+    };
+  }
+  return { city: '', country: '' };
 }
 
 interface OpenMeteoNowResponse {
@@ -58,7 +71,12 @@ function mapWeatherCode(code: number): WeatherType {
 
 export async function fetchCurrentWeather(): Promise<WeatherData> {
   // Get location by IP
-  const { lat, lon, city, country } = await getIpLocation();
+  const { lat, lon, city: enCity, country: enCountry } = await getIpLocation();
+
+  // Try to get Chinese city name from English city name
+  const zh = await getChineseCityName(enCity);
+  const city = zh.city || enCity;
+  const country = zh.country || enCountry;
 
   const locationName = `${city} · ${country}`;
 
