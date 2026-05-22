@@ -1,6 +1,7 @@
-# 极简天气预报
+# Pane 天气
 
-一个简洁的天气预报网页。
+一个简洁的天气预报网页。无后端，整个前端页面部署在GitHub Pages ，用域名指向GitHub Pages前端，实现域名访问。
+在线演示地址：[Pane](https://pane.jiso.qzz.io/)
 
 ## GitHub Pages 部署步骤
 
@@ -77,6 +78,3 @@ gh workflow run "pages.yml"
 gh run view <run-id> --web
 ```
 
-## 访问
-
-部署完成后访问: https://JacobNg1.github.io/pane/
