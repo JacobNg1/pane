@@ -1,8 +1,8 @@
 import type { WeatherData, ForecastDay, WeatherType } from '../types/weather';
 
 const API_KEY = import.meta.env.VITE_QWEATHER_API_KEY;
-const NOW_API = 'https://devapi.qweather.com/v7/weather/now';
-const FORECAST_API = 'https://devapi.qweather.com/v7/weather/7d';
+const NOW_API = 'https://api.qweather.com/v7/weather/now';
+const FORECAST_API = 'https://api.qweather.com/v7/weather/7d';
 
 interface QWeatherNowResponse {
   code: string;
