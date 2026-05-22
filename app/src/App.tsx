@@ -65,6 +65,9 @@ export default function App() {
         <WeatherToggle current={weather} onChange={setWeather} />
         {loading && <div className="text-white/60 text-sm mt-4">加载中...</div>}
         {error && <div className="text-red-300 text-sm mt-4">{error}</div>}
+        <div className="absolute bottom-4 text-white/40 text-xs">
+          Made by <a href="https://github.com/JacobNg1" target="_blank" rel="noopener noreferrer" className="underline hover:text-white/70 transition-colors">Jacob</a>
+        </div>
       </div>
     </div>
   );
