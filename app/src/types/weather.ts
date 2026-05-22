@@ -1,4 +1,4 @@
-export type WeatherType = 'sunny' | 'cloudy' | 'rainy' | 'snowy' | 'night';
+export type WeatherType = 'sunny' | 'cloudy' | 'rainy' | 'stormy' | 'snowy' | 'night';
 
 export interface WeatherData {
   location: string;
@@ -24,10 +24,11 @@ export const weatherColors: Record<WeatherType, { gradient: string; accent: stri
   sunny: { gradient: 'from-sky-400 via-yellow-300 to-orange-200', accent: '#FFB347', text: '#8B4513' },
   cloudy: { gradient: 'from-gray-400 via-gray-500 to-gray-600', accent: '#B4C6E7', text: '#2C3E50' },
   rainy: { gradient: 'from-slate-700 via-slate-600 to-slate-800', accent: '#5B8FA8', text: '#E0E7EE' },
+  stormy: { gradient: 'from-gray-900 via-slate-800 to-gray-700', accent: '#4A5568', text: '#CBD5E0' },
   snowy: { gradient: 'from-blue-100 via-blue-200 to-blue-300', accent: '#85C1E9', text: '#2E4A62' },
   night: { gradient: 'from-indigo-950 via-purple-900 to-indigo-900', accent: '#7B68EE', text: '#E8E6F0' }
 };
 
 export const weatherLabels: Record<WeatherType, string> = {
-  sunny: '晴天', cloudy: '多云', rainy: '雨天', snowy: '雪天', night: '夜晚'
+  sunny: '晴天', cloudy: '多云', rainy: '下雨', stormy: '暴雨', snowy: '雪天', night: '夜晚'
 };

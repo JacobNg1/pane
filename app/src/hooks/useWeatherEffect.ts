@@ -6,13 +6,13 @@ export const useWeatherEffect = (weather: WeatherType, canvasRef: React.RefObjec
   const particlesRef = useRef<{ x: number; y: number; speed: number; size: number; opacity: number; angle?: number }[]>([]);
 
   const createParticles = useCallback((canvas: HTMLCanvasElement) => {
-    const count = weather === 'rainy' ? 150 : weather === 'snowy' ? 100 : weather === 'sunny' ? 5 : 8;
+    const count = weather === 'rainy' || weather === 'stormy' ? 150 : weather === 'snowy' ? 100 : weather === 'sunny' ? 5 : 8;
     particlesRef.current = Array.from({ length: count }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
-      speed: weather === 'rainy' ? 8 + Math.random() * 8 : weather === 'snowy' ? 1 + Math.random() * 2 : weather === 'sunny' ? 0.2 + Math.random() * 0.3 : 0.3 + Math.random() * 0.5,
-      size: weather === 'rainy' ? 1 + Math.random() * 2 : weather === 'snowy' ? 2 + Math.random() * 4 : weather === 'sunny' ? 60 + Math.random() * 80 : 50 + Math.random() * 100,
-      opacity: weather === 'rainy' ? 0.3 + Math.random() * 0.5 : weather === 'snowy' ? 0.5 + Math.random() * 0.5 : 0.1 + Math.random() * 0.3,
+      speed: weather === 'rainy' || weather === 'stormy' ? 8 + Math.random() * 8 : weather === 'snowy' ? 1 + Math.random() * 2 : weather === 'sunny' ? 0.2 + Math.random() * 0.3 : 0.3 + Math.random() * 0.5,
+      size: weather === 'rainy' || weather === 'stormy' ? 1 + Math.random() * 2 : weather === 'snowy' ? 2 + Math.random() * 4 : weather === 'sunny' ? 60 + Math.random() * 80 : 50 + Math.random() * 100,
+      opacity: weather === 'rainy' || weather === 'stormy' ? 0.3 + Math.random() * 0.5 : weather === 'snowy' ? 0.5 + Math.random() * 0.5 : 0.1 + Math.random() * 0.3,
       angle: Math.random() * Math.PI * 2
     }));
   }, [weather]);
@@ -25,7 +25,7 @@ export const useWeatherEffect = (weather: WeatherType, canvasRef: React.RefObjec
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     const particles = particlesRef.current;
 
-    if (weather === 'rainy') {
+    if (weather === 'rainy' || weather === 'stormy') {
       particles.forEach(p => {
         ctx!.beginPath();
         ctx!.strokeStyle = `rgba(147, 197, 253, ${p.opacity})`;

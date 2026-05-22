@@ -23,8 +23,8 @@ const loadingForecast: ForecastDay[] = [
   { day: '今天', date: '', high: 0, low: 0, weather: 'sunny' },
   { day: '明天', date: '', high: 0, low: 0, weather: 'cloudy' },
   { day: '后天', date: '', high: 0, low: 0, weather: 'rainy' },
-  { day: '周四', date: '', high: 0, low: 0, weather: 'rainy' },
-  { day: '周五', date: '', high: 0, low: 0, weather: 'cloudy' },
+  { day: '周四', date: '', high: 0, low: 0, weather: 'stormy' },
+  { day: '周五', date: '', high: 0, low: 0, weather: 'snowy' },
 ];
 
 export default function App() {

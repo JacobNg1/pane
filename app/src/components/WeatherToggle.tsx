@@ -2,8 +2,8 @@ import type { WeatherType } from '../types/weather';
 import { weatherLabels } from '../types/weather';
 import { WeatherIcon } from './WeatherIcon';
 
-const options: WeatherType[] = ['sunny', 'cloudy', 'rainy', 'snowy', 'night'];
-const emojis: Record<WeatherType, string> = { sunny: '☀️', cloudy: '⛅', rainy: '🌧️', snowy: '❄️', night: '🌙' };
+const options: WeatherType[] = ['sunny', 'cloudy', 'rainy', 'stormy', 'snowy'];
+const emojis: Record<WeatherType, string> = { sunny: '☀️', cloudy: '⛅', rainy: '🌧️', stormy: '⛈️', snowy: '❄️', night: '🌙' };
 
 export const WeatherToggle = ({ current, onChange }: { current: WeatherType; onChange: (w: WeatherType) => void }) => (
   <div className="relative z-10 w-full max-w-md mx-auto px-4 mt-6">

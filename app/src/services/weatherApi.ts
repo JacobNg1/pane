@@ -65,7 +65,7 @@ function mapWeatherCode(code: number): WeatherType {
   if (code >= 71 && code <= 77) return 'snowy';
   if (code >= 80 && code <= 82) return 'rainy';
   if (code >= 85 && code <= 86) return 'snowy';
-  if (code >= 95 && code <= 99) return 'rainy';
+  if (code >= 95 && code <= 99) return 'stormy';
   return 'sunny';
 }
 

@@ -13,6 +13,7 @@ export const WeatherIcon = ({ weather, size = 'lg', className = '' }: WeatherIco
       {weather === 'sunny' && <SunnyIcon />}
       {weather === 'cloudy' && <CloudyIcon />}
       {weather === 'rainy' && <RainyIcon />}
+      {weather === 'stormy' && <StormyIcon />}
       {weather === 'snowy' && <SnowyIcon />}
       {weather === 'night' && <NightIcon />}
     </div>
@@ -91,6 +92,28 @@ const SnowyIcon = () => (
       <circle cx="60" cy="65" r="3" fill="white" />
       <circle cx="75" cy="75" r="2" fill="white" />
     </g>
+  </svg>
+);
+
+const StormyIcon = () => (
+  <svg viewBox="0 0 100 100" className="w-full h-full">
+    <defs>
+      <linearGradient id="stormCloud" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stopColor="#37474F" /><stop offset="100%" stopColor="#212121" />
+      </linearGradient>
+    </defs>
+    <g>
+      <ellipse cx="35" cy="38" rx="20" ry="14" fill="url(#stormCloud)" />
+      <ellipse cx="55" cy="30" rx="24" ry="18" fill="url(#stormCloud)" />
+      <ellipse cx="75" cy="38" rx="17" ry="12" fill="url(#stormCloud)" />
+    </g>
+    <g className="animate-rain-fall">
+      <line x1="30" y1="55" x2="25" y2="72" stroke="#90CAF9" strokeWidth="2" strokeLinecap="round" />
+      <line x1="45" y1="58" x2="40" y2="78" stroke="#90CAF9" strokeWidth="2" strokeLinecap="round" />
+      <line x1="60" y1="55" x2="55" y2="74" stroke="#90CAF9" strokeWidth="2" strokeLinecap="round" />
+      <line x1="75" y1="58" x2="70" y2="77" stroke="#90CAF9" strokeWidth="2" strokeLinecap="round" />
+    </g>
+    <polygon points="48,48 42,62 50,62 46,78 58,58 50,58" fill="#FFD600" className="animate-pulse" />
   </svg>
 );
 

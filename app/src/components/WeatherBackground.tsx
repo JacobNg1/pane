@@ -6,6 +6,7 @@ const gradientClasses: Record<WeatherType, string> = {
   sunny: 'from-sky-400 via-yellow-300 to-orange-200',
   cloudy: 'from-gray-500 via-gray-400 to-gray-600',
   rainy: 'from-slate-800 via-slate-700 to-slate-900',
+  stormy: 'from-gray-900 via-slate-800 to-gray-700',
   snowy: 'from-blue-200 via-blue-100 to-blue-300',
   night: 'from-indigo-950 via-purple-950 to-indigo-900'
 };
@@ -22,8 +23,10 @@ export const WeatherBackground = ({ weather }: { weather: WeatherType }) => {
       {weather === 'night' && <Moon />}
       {weather === 'sunny' && <Sun />}
       {weather === 'rainy' && <RainOverlay />}
+      {weather === 'stormy' && <RainOverlay />}
       {weather === 'snowy' && <SnowFog />}
       {weather === 'rainy' && <div className="absolute inset-0 bg-black/20" />}
+      {weather === 'stormy' && <div className="absolute inset-0 bg-black/30" />}
       {weather === 'night' && <div className="absolute inset-0 bg-black/30" />}
     </div>
   );
