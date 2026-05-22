@@ -1,8 +1,8 @@
-name: Deploy to GitHub Pages
+name: Deploy Dev to GitHub Pages
 
 on:
   push:
-    branches: [master]
+    branches: [dev]
   workflow_dispatch:
 
 permissions:
@@ -11,7 +11,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages"
+  group: "pages-dev"
   cancel-in-progress: true
 
 jobs:
@@ -36,12 +36,12 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: cd app && pnpm install
 
       - name: Build
         env:
-          VITE_AMAP_API_KEY: ${{ secrets.VITE_AMAP_API_KEY }}
-        run: pnpm build
+          VITE_QWEATHER_API_KEY: ${{ secrets.VITE_QWEATHER_API_KEY }}
+        run: cd app && pnpm build
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
