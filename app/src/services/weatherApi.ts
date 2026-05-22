@@ -1,145 +1,103 @@
 import type { WeatherData, ForecastDay, WeatherType } from '../types/weather';
 
-const API_KEY = import.meta.env.VITE_QWEATHER_API_KEY;
-const NOW_API = 'https://api.qweather.com/v7/weather/now';
-const FORECAST_API = 'https://api.qweather.com/v7/weather/7d';
+const NOW_API = 'https://api.open-meteo.com/v1/forecast';
+const GEOCODE_API = 'https://geocoding-api.open-meteo.com/v1/search';
 
-interface QWeatherNowResponse {
-  code: string;
-  now: {
-    temp: string;
-    feelsLike: string;
-    humidity: string;
-    windSpeed: string;
-    pressure: string;
-    vis: string;
-    weather: string;
-    windDir: string;
-  };
-  location: {
-    name: string;
-    id: string;
+interface OpenMeteoNowResponse {
+  current: {
+    temperature_2m: number;
+    relative_humidity_2m: number;
+    wind_speed_10m: number;
+    weather_code: number;
   };
 }
 
-interface QWeatherForecastResponse {
-  code: string;
-  daily: Array<{
-    fxDate: string;
-    tempMax: string;
-    tempMin: string;
-    textDay: string;
-    textNight: string;
+interface OpenMeteoForecastResponse {
+  daily: {
+    time: string[];
+    weather_code: number[];
+    temperature_2m_max: number[];
+    temperature_2m_min: number[];
+  };
+}
+
+interface GeocodingResponse {
+  results?: Array<{
+    name: string;
+    latitude: number;
+    longitude: number;
+    country: string;
   }>;
-  location: {
-    name: string;
-    id: string;
-  };
 }
 
-function mapWeatherCode(code: string): WeatherType {
-  const codeMap: Record<string, WeatherType> = {
-    '100': 'sunny',
-    '101': 'cloudy',
-    '102': 'cloudy',
-    '103': 'cloudy',
-    '104': 'cloudy',
-    '200': 'sunny',
-    '201': 'cloudy',
-    '202': 'cloudy',
-    '203': 'cloudy',
-    '204': 'cloudy',
-    '205': 'sunny',
-    '206': 'sunny',
-    '207': 'sunny',
-    '208': 'sunny',
-    '209': 'sunny',
-    '210': 'sunny',
-    '211': 'sunny',
-    '212': 'sunny',
-    '213': 'sunny',
-    '300': 'rainy',
-    '301': 'rainy',
-    '302': 'rainy',
-    '303': 'rainy',
-    '304': 'rainy',
-    '305': 'rainy',
-    '306': 'rainy',
-    '307': 'rainy',
-    '308': 'rainy',
-    '309': 'rainy',
-    '310': 'rainy',
-    '311': 'rainy',
-    '312': 'rainy',
-    '313': 'rainy',
-    '314': 'rainy',
-    '315': 'rainy',
-    '316': 'rainy',
-    '317': 'rainy',
-    '318': 'rainy',
-    '350': 'rainy',
-    '351': 'rainy',
-    '399': 'rainy',
-    '400': 'snowy',
-    '401': 'snowy',
-    '402': 'snowy',
-    '403': 'snowy',
-    '404': 'snowy',
-    '405': 'snowy',
-    '406': 'snowy',
-    '407': 'snowy',
-    '408': 'snowy',
-    '409': 'snowy',
-    '410': 'snowy',
-    '499': 'snowy',
-    '500': 'cloudy',
-    '501': 'cloudy',
-    '502': 'cloudy',
-    '503': 'cloudy',
-    '504': 'cloudy',
-    '507': 'cloudy',
-    '508': 'cloudy',
-    '509': 'cloudy',
-    '510': 'cloudy',
-    '511': 'cloudy',
-    '512': 'cloudy',
-    '513': 'cloudy',
-    '514': 'cloudy',
-    '515': 'cloudy',
-  };
-  return codeMap[code] || 'sunny';
+function mapWeatherCode(code: number): WeatherType {
+  if (code === 0) return 'sunny';
+  if (code >= 1 && code <= 3) return 'cloudy';
+  if (code >= 45 && code <= 48) return 'cloudy';
+  if (code >= 51 && code <= 67) return 'rainy';
+  if (code >= 71 && code <= 77) return 'snowy';
+  if (code >= 80 && code <= 82) return 'rainy';
+  if (code >= 85 && code <= 86) return 'snowy';
+  if (code >= 95 && code <= 99) return 'rainy';
+  return 'sunny';
 }
 
-export async function fetchCurrentWeather(location: string = '101010100'): Promise<WeatherData> {
-  const url = `${NOW_API}?location=${location}&key=${API_KEY}`;
-  const response = await fetch(url);
-  const data: QWeatherNowResponse = await response.json();
+export async function fetchCurrentWeather(location: string = 'Beijing'): Promise<WeatherData> {
+  // First geocode the location name
+  const geoResponse = await fetch(`${GEOCODE_API}?name=${encodeURIComponent(location)}&count=1&language=zh&format=json`);
+  const geoData: GeocodingResponse = await geoResponse.json();
 
-  if (data.code !== '200') {
-    throw new Error(`API error: ${data.code}`);
+  if (!geoData.results || geoData.results.length === 0) {
+    throw new Error('Location not found');
   }
+
+  const { latitude, longitude, name, country } = geoData.results[0];
+
+  // Fetch current weather
+  const weatherParams = new URLSearchParams({
+    latitude: latitude.toString(),
+    longitude: longitude.toString(),
+    current: 'temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code',
+    timezone: 'Asia/Shanghai',
+  });
+
+  const weatherResponse = await fetch(`${NOW_API}?${weatherParams}`);
+  const weatherData: OpenMeteoNowResponse = await weatherResponse.json();
 
   return {
-    location: data.location.name + ' · 中国',
-    temperature: parseInt(data.now.temp),
-    weather: mapWeatherCode(data.now.weather),
-    humidity: parseInt(data.now.humidity),
-    windSpeed: parseInt(data.now.windSpeed),
-    pressure: parseInt(data.now.pressure),
-    feelsLike: parseInt(data.now.feelsLike),
+    location: `${name} · ${country}`,
+    temperature: Math.round(weatherData.current.temperature_2m),
+    weather: mapWeatherCode(weatherData.current.weather_code),
+    humidity: Math.round(weatherData.current.relative_humidity_2m),
+    windSpeed: Math.round(weatherData.current.wind_speed_10m),
+    pressure: 1013,
+    feelsLike: Math.round(weatherData.current.temperature_2m),
     uvIndex: 0,
-    visibility: parseInt(data.now.vis),
+    visibility: 10,
   };
 }
 
-export async function fetchForecast(location: string = '101010100'): Promise<ForecastDay[]> {
-  const url = `${FORECAST_API}?location=${location}&key=${API_KEY}`;
-  const response = await fetch(url);
-  const data: QWeatherForecastResponse = await response.json();
+export async function fetchForecast(location: string = 'Beijing'): Promise<ForecastDay[]> {
+  // First geocode the location name
+  const geoResponse = await fetch(`${GEOCODE_API}?name=${encodeURIComponent(location)}&count=1&language=zh&format=json`);
+  const geoData: GeocodingResponse = await geoResponse.json();
 
-  if (data.code !== '200') {
-    throw new Error(`API error: ${data.code}`);
+  if (!geoData.results || geoData.results.length === 0) {
+    throw new Error('Location not found');
   }
+
+  const { latitude, longitude } = geoData.results[0];
+
+  // Fetch 7-day forecast
+  const forecastParams = new URLSearchParams({
+    latitude: latitude.toString(),
+    longitude: longitude.toString(),
+    daily: 'weather_code,temperature_2m_max,temperature_2m_min',
+    timezone: 'Asia/Shanghai',
+  });
+
+  const forecastResponse = await fetch(`${NOW_API}?${forecastParams}`);
+  const forecastData: OpenMeteoForecastResponse = await forecastResponse.json();
 
   const dayMap: Record<string, string> = {
     '0': '今天',
@@ -147,11 +105,11 @@ export async function fetchForecast(location: string = '101010100'): Promise<For
     '2': '后天',
   };
 
-  return data.daily.slice(0, 5).map((day, index) => ({
-    day: dayMap[index] || new Date(day.fxDate).toLocaleDateString('zh-CN', { weekday: 'short' }),
-    date: day.fxDate,
-    high: parseInt(day.tempMax),
-    low: parseInt(day.tempMin),
-    weather: mapWeatherCode(day.textDay),
+  return forecastData.daily.time.slice(0, 5).map((date, index) => ({
+    day: dayMap[index] || new Date(date).toLocaleDateString('zh-CN', { weekday: 'short' }),
+    date,
+    high: Math.round(forecastData.daily.temperature_2m_max[index]),
+    low: Math.round(forecastData.daily.temperature_2m_min[index]),
+    weather: mapWeatherCode(forecastData.daily.weather_code[index]),
   }));
 }
