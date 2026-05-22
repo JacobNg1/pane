@@ -39,6 +39,8 @@ jobs:
         run: cd app && pnpm install
 
       - name: Build
+        env:
+          VITE_QWEATHER_API_KEY: ${{ secrets.VITE_QWEATHER_API_KEY }}
         run: cd app && pnpm build
 
       - name: Setup Pages

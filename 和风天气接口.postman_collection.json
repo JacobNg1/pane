@@ -1,0 +1,289 @@
+{
+  "info": {
+    "_postman_id": "dc60e32e-4e3c-4adc-a770-93cdb043c455",
+    "name": "和风天气接口",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "49807714",
+    "_collection_link": "https://go.postman.co/collection/14458620-dc60e32e-4e3c-4adc-a770-93cdb043c455?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "查询地区参数",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-QW-Api-Key",
+            "value": "56be2e91c1ca4bb48e835b77556dd6ed",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "https://geoapi.qweather.com/v2/city/lookup?location=101040100",
+          "protocol": "https",
+          "host": [
+            "geoapi",
+            "qweather",
+            "com"
+          ],
+          "path": [
+            "v2",
+            "city",
+            "lookup"
+          ],
+          "query": [
+            {
+              "key": "location",
+              "value": "101040100"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "查询具体天气",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-QW-Api-Key",
+            "value": "56be2e91c1ca4bb48e835b77556dd6ed",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "https://api.qweather.com/v7/weather/now?location=101042100",
+          "protocol": "https",
+          "host": [
+            "api",
+            "qweather",
+            "com"
+          ],
+          "path": [
+            "v7",
+            "weather",
+            "now"
+          ],
+          "query": [
+            {
+              "key": "location",
+              "value": "101042100"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "7天天气预报",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-QW-Api-Key",
+            "value": "56be2e91c1ca4bb48e835b77556dd6ed",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "https://api.qweather.com/v7/weather/7d?location=101040900",
+          "protocol": "https",
+          "host": [
+            "api",
+            "qweather",
+            "com"
+          ],
+          "path": [
+            "v7",
+            "weather",
+            "7d"
+          ],
+          "query": [
+            {
+              "key": "location",
+              "value": "101040900"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "实时空气质量",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-QW-Api-Key",
+            "value": "56be2e91c1ca4bb48e835b77556dd6ed",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "https://api.qweather.com/airquality/v1/current/29.38192/106.51942",
+          "protocol": "https",
+          "host": [
+            "api",
+            "qweather",
+            "com"
+          ],
+          "path": [
+            "airquality",
+            "v1",
+            "current",
+            "29.38192",
+            "106.51942"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "格点逐小时天气预报",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-QW-Api-Key",
+            "value": "56be2e91c1ca4bb48e835b77556dd6ed",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "https://api.qweather.com/v7/grid-weather/24h?location=106.481551,29.5235",
+          "protocol": "https",
+          "host": [
+            "api",
+            "qweather",
+            "com"
+          ],
+          "path": [
+            "v7",
+            "grid-weather",
+            "24h"
+          ],
+          "query": [
+            {
+              "key": "location",
+              "value": "106.481551,29.5235"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "逐小时天气预报",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-QW-Api-Key",
+            "value": "56be2e91c1ca4bb48e835b77556dd6ed",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "https://api.qweather.com/v7/weather/24h?location=101010100",
+          "protocol": "https",
+          "host": [
+            "api",
+            "qweather",
+            "com"
+          ],
+          "path": [
+            "v7",
+            "weather",
+            "24h"
+          ],
+          "query": [
+            {
+              "key": "location",
+              "value": "101010100"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "灾害预警（弃用）",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-QW-Api-Key",
+            "value": "56be2e91c1ca4bb48e835b77556dd6ed",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "https://api.qweather.com/v7/warning/now?location=101310212",
+          "protocol": "https",
+          "host": [
+            "api",
+            "qweather",
+            "com"
+          ],
+          "path": [
+            "v7",
+            "warning",
+            "now"
+          ],
+          "query": [
+            {
+              "key": null,
+              "value": "106.55046,29.56376",
+              "type": "text",
+              "disabled": true
+            },
+            {
+              "key": "location",
+              "value": "101310212"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "实时天气预警",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-QW-Api-Key",
+            "value": "56be2e91c1ca4bb48e835b77556dd6ed",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "https://api.qweather.com/weatheralert/v1/current/29.56376/106.55046",
+          "protocol": "https",
+          "host": [
+            "api",
+            "qweather",
+            "com"
+          ],
+          "path": [
+            "weatheralert",
+            "v1",
+            "current",
+            "29.56376",
+            "106.55046"
+          ],
+          "query": [
+            {
+              "key": "localTime",
+              "value": "true",
+              "type": "text",
+              "disabled": true
+            }
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
