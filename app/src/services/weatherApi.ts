@@ -1,17 +1,6 @@
 import type { WeatherData, ForecastDay, WeatherType } from '../types/weather';
 
 const NOW_API = 'https://api.open-meteo.com/v1/forecast';
-const GEOCODE_API = 'https://geocoding-api.open-meteo.com/v1/search';
-const IP_GEO_API = 'https://ip-api.com/json/?fields=status,country,countryCode,city,lat,lon';
-
-interface IpGeoResponse {
-  status: string;
-  country: string;
-  countryCode: string;
-  city: string;
-  lat: number;
-  lon: number;
-}
 
 interface OpenMeteoNowResponse {
   current: {
@@ -31,15 +20,6 @@ interface OpenMeteoForecastResponse {
   };
 }
 
-interface GeocodingResponse {
-  results?: Array<{
-    name: string;
-    latitude: number;
-    longitude: number;
-    country: string;
-  }>;
-}
-
 function mapWeatherCode(code: number): WeatherType {
   if (code === 0) return 'sunny';
   if (code >= 1 && code <= 3) return 'cloudy';
@@ -53,29 +33,25 @@ function mapWeatherCode(code: number): WeatherType {
 }
 
 export async function fetchCurrentWeather(): Promise<WeatherData> {
-  // Get user location by IP
-  const ipGeoResponse = await fetch(IP_GEO_API);
-  const ipGeoData: IpGeoResponse = await ipGeoResponse.json();
+  // Get location by IP
+  const ipData = await fetch('https://ip-api.com/json/?lang=zh-CN')
+    .then(res => res.json());
 
-  if (ipGeoData.status !== 'success') {
-    throw new Error('Failed to get location');
-  }
+  const { lat, lon, country, city } = ipData;
+  const locationName = `${city} · ${country}`;
 
-  const { lat, lon, city, country } = ipGeoData;
-
-  // Fetch current weather directly using coordinates
   const weatherParams = new URLSearchParams({
     latitude: lat.toString(),
     longitude: lon.toString(),
     current: 'temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code',
-    timezone: 'Asia/Shanghai',
+    timezone: 'auto',
   });
 
   const weatherResponse = await fetch(`${NOW_API}?${weatherParams}`);
   const weatherData: OpenMeteoNowResponse = await weatherResponse.json();
 
   return {
-    location: `${city} · ${country}`,
+    location: locationName,
     temperature: Math.round(weatherData.current.temperature_2m),
     weather: mapWeatherCode(weatherData.current.weather_code),
     humidity: Math.round(weatherData.current.relative_humidity_2m),
@@ -88,22 +64,17 @@ export async function fetchCurrentWeather(): Promise<WeatherData> {
 }
 
 export async function fetchForecast(): Promise<ForecastDay[]> {
-  // Get user location by IP
-  const ipGeoResponse = await fetch(IP_GEO_API);
-  const ipGeoData: IpGeoResponse = await ipGeoResponse.json();
+  // Get location by IP
+  const ipData = await fetch('https://ip-api.com/json/?lang=zh-CN')
+    .then(res => res.json());
 
-  if (ipGeoData.status !== 'success') {
-    throw new Error('Failed to get location');
-  }
+  const { lat, lon } = ipData;
 
-  const { lat, lon } = ipGeoData;
-
-  // Fetch 7-day forecast directly using coordinates
   const forecastParams = new URLSearchParams({
     latitude: lat.toString(),
     longitude: lon.toString(),
     daily: 'weather_code,temperature_2m_max,temperature_2m_min',
-    timezone: 'Asia/Shanghai',
+    timezone: 'auto',
   });
 
   const forecastResponse = await fetch(`${NOW_API}?${forecastParams}`);
