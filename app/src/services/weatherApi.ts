@@ -9,32 +9,46 @@ interface IpLocation {
   country: string;
 }
 
+// Cache IP location to avoid duplicate requests
+let cachedIpLocation: IpLocation | null = null;
+let cachedCityName: { city: string; country: string } | null = null;
+
 async function getIpLocation(): Promise<IpLocation> {
+  if (cachedIpLocation) {
+    return cachedIpLocation;
+  }
+
   // ip.sb returns reliable lat/lon; city may be English
   const res = await fetch('https://api.ip.sb/geoip');
   if (!res.ok) {
     throw new Error(`IP geolocation failed: ${res.status}`);
   }
   const data = await res.json();
-  return {
+  cachedIpLocation = {
     lat: parseFloat(data.latitude),
     lon: parseFloat(data.longitude),
     city: data.city || data.region || '未知城市',
     country: data.country || '',
   };
+  return cachedIpLocation;
 }
 
 async function getChineseCityName(enCity: string): Promise<{ city: string; country: string }> {
+  if (cachedCityName) {
+    return cachedCityName;
+  }
+
   // Search by English city name but request Chinese language results
   const res = await fetch(
     `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(enCity)}&count=1&language=zh&format=json`
   );
   const data = await res.json();
   if (data.results && data.results.length > 0) {
-    return {
+    cachedCityName = {
       city: data.results[0].name || enCity,
       country: data.results[0].country || '',
     };
+    return cachedCityName;
   }
   return { city: '', country: '' };
 }
@@ -123,17 +137,25 @@ export async function fetchForecast(): Promise<ForecastDay[]> {
     throw new Error(`Open-Meteo forecast error: ${JSON.stringify(forecastData)}`);
   }
 
+  // Debug: log weather codes
+  console.log('Forecast weather codes:', forecastData.daily.weather_code);
+
   const dayMap: Record<string, string> = {
     '0': '今天',
     '1': '明天',
     '2': '后天',
   };
 
-  return forecastData.daily.time.slice(0, 5).map((date, index) => ({
-    day: dayMap[index] || new Date(date).toLocaleDateString('zh-CN', { weekday: 'short' }),
-    date,
-    high: Math.round(forecastData.daily.temperature_2m_max[index]),
-    low: Math.round(forecastData.daily.temperature_2m_min[index]),
-    weather: mapWeatherCode(forecastData.daily.weather_code[index]),
-  }));
+  return forecastData.daily.time.slice(0, 5).map((date, index) => {
+    const code = forecastData.daily.weather_code[index];
+    const weather = mapWeatherCode(code);
+    console.log(`Day ${index}: code=${code}, weather=${weather}`);
+    return {
+      day: dayMap[index] || new Date(date).toLocaleDateString('zh-CN', { weekday: 'short' }),
+      date,
+      high: Math.round(forecastData.daily.temperature_2m_max[index]),
+      low: Math.round(forecastData.daily.temperature_2m_min[index]),
+      weather,
+    };
+  });
 }
