@@ -43,6 +43,8 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build
+        env:
+          VITE_QWEATHER_API_KEY: ${{ secrets.VITE_QWEATHER_API_KEY }}
         run: pnpm build
 
       - name: Setup Pages
